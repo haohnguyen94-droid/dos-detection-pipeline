@@ -1,5 +1,3 @@
-version: "3.9"
-
 # ─────────────────────────────────────────────────────────────────────────────
 # DoS Detection Pipeline — docker-compose stub
 # Three services on an isolated bridge network (no internet routing).
