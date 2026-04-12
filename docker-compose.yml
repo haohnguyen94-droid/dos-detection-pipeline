@@ -1,0 +1,57 @@
+version: "3.9"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# DoS Detection Pipeline — docker-compose stub
+# Three services on an isolated bridge network (no internet routing).
+# ─────────────────────────────────────────────────────────────────────────────
+
+networks:
+  dos-lab:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+volumes:
+  pcap-data:    # Shared between victim (write) and detector (read)
+
+services:
+
+  victim:
+    build: ./victim
+    container_name: dos-victim
+    networks:
+      dos-lab:
+        ipv4_address: 172.20.0.10
+    volumes:
+      - pcap-data:/pcaps
+    # TODO (Alpha): add healthcheck once nginx is configured
+
+  attacker:
+    build: ./attacker
+    container_name: dos-attacker
+    networks:
+      dos-lab:
+        ipv4_address: 172.20.0.20
+    environment:
+      TARGET_IP: "172.20.0.10"
+      ATTACK_TYPE: "${ATTACK_TYPE:-syn_flood}"
+      DURATION_SEC: "${DURATION_SEC:-30}"
+    depends_on:
+      - victim
+    cap_add:
+      - NET_ADMIN   # Required for raw socket access
+
+  detector:
+    build: ./detector
+    container_name: dos-detector
+    networks:
+      - dos-lab
+    volumes:
+      - pcap-data:/pcaps:ro
+      - ./reports:/reports
+    environment:
+      PCAP_DIR: "/pcaps"
+      REPORT_DIR: "/reports"
+    depends_on:
+      - victim

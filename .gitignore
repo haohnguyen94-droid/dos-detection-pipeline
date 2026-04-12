@@ -1,0 +1,6 @@
+reports/*.html
+reports/*.json
+tests/pcaps/*.pcap
+__pycache__/
+*.py[cod]
+.DS_Store
