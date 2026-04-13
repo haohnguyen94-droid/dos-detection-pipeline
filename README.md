@@ -1,7 +1,7 @@
 # DoS Detection Pipeline
 
-**Network Security — Final Project**
-**Team:** Pair Project (+50% scope)
+**CECS 478: Data Security & Privacy — Final Project**
+
 
 A containerized pipeline that simulates Denial-of-Service attacks, captures traffic as PCAPs, and detects attack patterns using a rule-based engine.
 

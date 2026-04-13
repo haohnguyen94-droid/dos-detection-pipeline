@@ -42,9 +42,24 @@ build:
 	$(COMPOSE) build
 
 # ── capture ───────────────────────────────────────────────────────────────────
-# TODO (Alpha milestone): implement attacker scripts and victim capture
+# Run the full attack-and-capture pipeline:
+#   1. Start the victim (begins tcpdump + nginx)
+#   2. Brief pause so tcpdump finishes initializing before traffic arrives
+#   3. Run the attacker for $(DURATION_SEC) seconds
+#   4. Stop the victim cleanly (SIGTERM flushes the pcap via the trap handler)
+#   5. List captured pcaps so the user sees what was produced
 capture:
-	@echo "→ [stub] capture not yet implemented — coming at Alpha milestone"
+	@echo "→ Starting victim container (tcpdump + nginx)..."
+	$(COMPOSE) up -d victim
+	@sleep 2
+	@echo "→ Running $(ATTACK_TYPE) for $(DURATION_SEC)s against victim..."
+	$(COMPOSE) run --rm attacker
+	@echo ""
+	@echo " ✔ Capture complete. PCAPs in pcap-data volume:"
+	@$(COMPOSE) exec victim ls -lh /pcaps/
+	@echo "" 
+	@echo "→ Stopping victim and finalizing PCAP..."
+	$(COMPOSE) stop victim
 
 # ── detect ────────────────────────────────────────────────────────────────────
 # TODO (Beta milestone): implement detector rule engine
