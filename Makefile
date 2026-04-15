@@ -62,9 +62,10 @@ capture:
 	$(COMPOSE) stop victim
 
 # ── detect ────────────────────────────────────────────────────────────────────
-# TODO (Beta milestone): implement detector rule engine
 detect:
-	@echo "→ [stub] detect not yet implemented — coming at Beta milestone"
+	@echo "→ Running detector against latest captured PCAP..."
+	@mkdir -p reports
+	$(COMPOSE) run --no-deps --rm detector
 
 # ── run ───────────────────────────────────────────────────────────────────────
 run: capture detect
