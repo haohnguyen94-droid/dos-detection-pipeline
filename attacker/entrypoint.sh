@@ -10,8 +10,7 @@ case "${ATTACK_TYPE:-syn_flood}" in
     exec python /attacker/udp_flood.py
     ;;
   slowloris)
-    echo "[attacker] Slowloris attack not implemented yet." >&2
-    exit 1
+    exec python /attacker/slowloris.py
     ;;
   *)
     echo "[attacker]Unknown ATTACK_TYPE: $ATTACK_TYPE" >&2
