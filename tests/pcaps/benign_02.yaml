@@ -1,0 +1,4 @@
+attack_type: benign
+expected_alert: false
+duration_sec: 4
+notes: "Benign HTTP capture generated with curl requests only (no attack traffic)"

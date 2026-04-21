@@ -1,0 +1,4 @@
+attack_type: slowloris
+expected_alert: true
+duration_sec: 8
+notes: "Slowloris capture generated via ATTACK_TYPE=slowloris DURATION_SEC=8"

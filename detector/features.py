@@ -27,7 +27,11 @@ def extract_features(pcap_path: str) -> dict:
             "syn_rate": 0.0,
             "syn_rate_active": 0.0,
             "udp_rate": 0.0,
+            "udp_rate_active": 0.0,
             "ack_completion_ratio": 0.0,
+            "syn_ack_count": 0,
+            "rst_count": 0,
+            "psh_ack_count": 0,
             "long_lived_low_throughput_http_flows": 0,
             "http_flow_count": 0,
         }
@@ -41,8 +45,13 @@ def extract_features(pcap_path: str) -> dict:
     udp_count = 0
     tcp_count = 0
     icmp_count = 0
+    syn_ack_count = 0
+    rst_count = 0
+    psh_ack_count = 0
     first_syn_ts = None
     last_syn_ts = None
+    first_udp_ts = None
+    last_udp_ts = None
 
     # Directional HTTP flows to port 80.
     flow = defaultdict(lambda: {"first": None, "last": None, "payload_bytes": 0, "packets": 0})
@@ -61,6 +70,12 @@ def extract_features(pcap_path: str) -> dict:
                 last_syn_ts = ts
             if is_ack and not is_syn:
                 ack_only_count += 1
+            if is_syn and is_ack:
+                syn_ack_count += 1
+            if flags & 0x04:
+                rst_count += 1
+            if (flags & 0x18) == 0x18:
+                psh_ack_count += 1
 
             if IP in pkt and pkt[TCP].dport == 80:
                 key = (pkt[IP].src, pkt[IP].dst, int(pkt[TCP].sport), int(pkt[TCP].dport))
@@ -74,6 +89,10 @@ def extract_features(pcap_path: str) -> dict:
 
         if UDP in pkt:
             udp_count += 1
+            ts = float(pkt.time)
+            if first_udp_ts is None:
+                first_udp_ts = ts
+            last_udp_ts = ts
 
         if ICMP in pkt:
             icmp_count += 1
@@ -85,6 +104,12 @@ def extract_features(pcap_path: str) -> dict:
         else duration
     )
     syn_window = max(syn_window, 1e-6)
+    udp_window = (
+        (last_udp_ts - first_udp_ts)
+        if first_udp_ts is not None and last_udp_ts is not None and last_udp_ts > first_udp_ts
+        else duration
+    )
+    udp_window = max(udp_window, 1e-6)
 
     long_lived_low_tp = 0
     for f in flow.values():
@@ -100,9 +125,13 @@ def extract_features(pcap_path: str) -> dict:
         "udp_count": udp_count,
         "tcp_count": tcp_count,
         "icmp_count": icmp_count,
+        "syn_ack_count": syn_ack_count,
+        "rst_count": rst_count,
+        "psh_ack_count": psh_ack_count,
         "syn_rate": syn_count / duration,
         "syn_rate_active": syn_count / syn_window,
         "udp_rate": udp_count / duration,
+        "udp_rate_active": udp_count / udp_window,
         "ack_completion_ratio": (ack_only_count / syn_count) if syn_count else 0.0,
         "long_lived_low_throughput_http_flows": long_lived_low_tp,
         "http_flow_count": len(flow),

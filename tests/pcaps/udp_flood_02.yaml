@@ -1,0 +1,4 @@
+attack_type: udp_flood
+expected_alert: true
+duration_sec: 5
+notes: "UDP flood capture generated via ATTACK_TYPE=udp_flood DURATION_SEC=5"

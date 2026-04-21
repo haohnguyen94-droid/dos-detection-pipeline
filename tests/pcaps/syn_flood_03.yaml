@@ -1,0 +1,4 @@
+attack_type: syn_flood
+expected_alert: true
+duration_sec: 5
+notes: "SYN flood capture generated via ATTACK_TYPE=syn_flood DURATION_SEC=5"
