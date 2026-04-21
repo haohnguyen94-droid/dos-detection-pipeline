@@ -3,6 +3,14 @@
 from __future__ import annotations
 
 
+THRESHOLDS = {
+    "syn_rate_min": 500.0,
+    "ack_completion_ratio_max": 0.10,
+    "udp_rate_min": 500.0,
+    "slowloris_flow_min": 30,
+}
+
+
 def _clamp(x: float) -> float:
     return max(0.0, min(1.0, x))
 
@@ -20,11 +28,11 @@ def apply_rules(features: dict) -> dict:
     slowloris_conf = _clamp((slowloris_flows - 10.0) / 20.0)
 
     alerts = []
-    if syn_rate_active >= 500.0 and ack_completion_ratio < 0.10:
+    if syn_rate_active >= THRESHOLDS["syn_rate_min"] and ack_completion_ratio < THRESHOLDS["ack_completion_ratio_max"]:
         alerts.append({"attack_type": "syn_flood", "confidence": round(syn_conf, 3)})
-    if udp_rate >= 500.0 and tcp_count <= max(5, int(udp_count * 0.05)):
+    if udp_rate >= THRESHOLDS["udp_rate_min"] and tcp_count <= max(5, int(udp_count * 0.05)):
         alerts.append({"attack_type": "udp_flood", "confidence": round(udp_conf, 3)})
-    if slowloris_flows >= 30:
+    if slowloris_flows >= THRESHOLDS["slowloris_flow_min"]:
         alerts.append({"attack_type": "slowloris", "confidence": round(slowloris_conf, 3)})
 
     if alerts:
@@ -42,10 +50,5 @@ def apply_rules(features: dict) -> dict:
         "confidence": confidence,
         "expected_alert": expected_alert,
         "alerts": alerts,
-        "thresholds": {
-            "syn_rate_min": 500.0,
-            "ack_completion_ratio_max": 0.10,
-            "udp_rate_min": 500.0,
-            "slowloris_flow_min": 30,
-        },
+        "thresholds": THRESHOLDS,
     }

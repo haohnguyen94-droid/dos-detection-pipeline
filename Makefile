@@ -2,7 +2,7 @@
 # DoS Detection Pipeline — Makefile (skeleton stub)
 # ─────────────────────────────────────────────────────────────────────────────
 
-.PHONY: bootstrap build capture detect run test clean help
+.PHONY: bootstrap build capture detect validate-rules run test clean help
 
 COMPOSE      := docker compose
 ATTACK_TYPE  ?= syn_flood
@@ -16,6 +16,7 @@ help:
 	@echo "  make bootstrap   Build all containers and verify setup"
 	@echo "  make capture     Run attacker + victim, save PCAP"
 	@echo "  make detect      Run detector on captured PCAP"
+	@echo "  make validate-rules  Run synthetic rule-signature checks"
 	@echo "  make run         Full pipeline: capture then detect"
 	@echo "  make test        Run regression suite"
 	@echo "  make clean       Tear down containers and volumes"
@@ -66,6 +67,11 @@ detect:
 	@echo "→ Running detector against latest captured PCAP..."
 	@mkdir -p reports
 	$(COMPOSE) run --no-deps --rm detector
+
+# ── validate-rules ────────────────────────────────────────────────────────────
+validate-rules:
+	@echo "→ Validating rule signatures (SYN/UDP/Slowloris/benign)..."
+	$(COMPOSE) run --no-deps --rm detector python /detector/validate_rules.py
 
 # ── run ───────────────────────────────────────────────────────────────────────
 run: capture detect
