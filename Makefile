@@ -77,9 +77,9 @@ validate-rules:
 run: capture detect
 
 # ── test ──────────────────────────────────────────────────────────────────────
-# TODO (Beta milestone): implement regression harness
 test:
-	@echo "→ [stub] test suite not yet implemented — coming at Beta milestone"
+	@echo "→ Running regression suite..."
+	./tests/run_tests.sh
 
 # ── clean ─────────────────────────────────────────────────────────────────────
 clean:
