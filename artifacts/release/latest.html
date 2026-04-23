@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DoS Detector Report</title>
+  <style>
+    body { font-family: sans-serif; margin: 2rem; line-height: 1.4; }
+    .ok { color: #166534; }
+    .warn { color: #991b1b; }
+    code { background: #f3f4f6; padding: 0.1rem 0.3rem; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>DoS Detection Report</h1>
+  <p><b>PCAP:</b> <code>/pcaps/victim-20260423-061301.pcap</code></p>
+  <p><b>Prediction:</b> <span class="ok">benign</span></p>
+  <p><b>Confidence:</b> 1.0</p>
+  <h2>Alerts</h2>
+  <pre>[]</pre>
+  <h2>Features</h2>
+  <pre>{
+  "ack_completion_ratio": 7.4,
+  "ack_only_count": 74,
+  "capture_duration_sec": 7.355,
+  "http_flow_count": 10,
+  "icmp_count": 0,
+  "long_lived_low_throughput_http_flows": 0,
+  "packet_count": 119,
+  "psh_ack_count": 30,
+  "rst_count": 9,
+  "syn_ack_count": 10,
+  "syn_count": 10,
+  "syn_rate": 1.359633186273005,
+  "syn_rate_active": 2.0241956372141807,
+  "tcp_count": 103,
+  "udp_count": 0,
+  "udp_rate": 0.0,
+  "udp_rate_active": 0.0
+}</pre>
+</body>
+</html>

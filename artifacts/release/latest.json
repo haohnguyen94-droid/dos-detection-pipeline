@@ -1,0 +1,38 @@
+{
+  "detection": {
+    "alerts": [],
+    "confidence": 1.0,
+    "expected_alert": false,
+    "prediction": "benign",
+    "thresholds": {
+      "ack_completion_ratio_max": 0.1,
+      "slowloris_ack_ratio_min": 1.0,
+      "slowloris_flow_min": 100,
+      "slowloris_rst_ratio_max": 0.1,
+      "syn_rate_min": 500.0,
+      "syn_rst_ratio_min": 0.8,
+      "udp_rate_active_min": 450.0
+    }
+  },
+  "features": {
+    "ack_completion_ratio": 7.4,
+    "ack_only_count": 74,
+    "capture_duration_sec": 7.355,
+    "http_flow_count": 10,
+    "icmp_count": 0,
+    "long_lived_low_throughput_http_flows": 0,
+    "packet_count": 119,
+    "psh_ack_count": 30,
+    "rst_count": 9,
+    "syn_ack_count": 10,
+    "syn_count": 10,
+    "syn_rate": 1.359633186273005,
+    "syn_rate_active": 2.0241956372141807,
+    "tcp_count": 103,
+    "udp_count": 0,
+    "udp_rate": 0.0,
+    "udp_rate_active": 0.0
+  },
+  "pcap": "/pcaps/victim-20260423-061301.pcap",
+  "timestamp_utc": "2026-04-23T06:13:11.165436+00:00"
+}

@@ -1,0 +1,112 @@
+=== DoS Detection Pipeline — Live Demo ===
+
+── 1/4 SYN Flood ──
+docker compose up -d victim
+ Container dos-victim Running 
+DURATION_SEC=5 docker compose run --rm attacker
+ Container dos-victim Running 
+ Container dos-pipeline-skeleton-attacker-run-64d33fa3ef1d Creating 
+ Container dos-pipeline-skeleton-attacker-run-64d33fa3ef1d Created 
+[syn_flood] target=172.20.0.10:80 duration=5s
+[syn_flood] sent 4900 packets in 5.0s (972 pps)
+docker compose stop victim
+ Container dos-victim Stopping 
+ Container dos-victim Stopped 
+→ Detecting...
+docker compose run --no-deps --rm detector
+ Container dos-pipeline-skeleton-detector-run-383552cb5aae Creating 
+ Container dos-pipeline-skeleton-detector-run-383552cb5aae Created 
+[detector] pcap=/pcaps/victim-20260423-065255.pcap
+[detector] prediction=syn_flood confidence=1.0
+[detector] wrote /reports/report-20260423-065310.json
+[detector] wrote /reports/report-20260423-065310.html
+
+── 2/4 UDP Flood ──
+docker compose up -d victim
+ Container dos-victim Starting 
+ Container dos-victim Started 
+ATTACK_TYPE=udp_flood DURATION_SEC=5 docker compose run --rm attacker
+ Container dos-victim Running 
+ Container dos-pipeline-skeleton-attacker-run-d453303447c4 Creating 
+ Container dos-pipeline-skeleton-attacker-run-d453303447c4 Created 
+[udp_flood] target=172.20.0.10 (random ports) duration=5s
+[udp_flood] sent 5000 packets in 5.1s (982 pps)
+docker compose stop victim
+ Container dos-victim Stopping 
+ Container dos-victim Stopped 
+→ Detecting...
+docker compose run --no-deps --rm detector
+ Container dos-pipeline-skeleton-detector-run-fcfae4c52a04 Creating 
+ Container dos-pipeline-skeleton-detector-run-fcfae4c52a04 Created 
+[detector] pcap=/pcaps/victim-20260423-065311.pcap
+[detector] prediction=udp_flood confidence=1.0
+[detector] wrote /reports/report-20260423-065322.json
+[detector] wrote /reports/report-20260423-065322.html
+
+── 3/4 Slowloris ──
+docker compose up -d victim
+ Container dos-victim Starting 
+ Container dos-victim Started 
+ATTACK_TYPE=slowloris DURATION_SEC=10 docker compose run --rm attacker
+ Container dos-victim Running 
+ Container dos-pipeline-skeleton-attacker-run-2331ba9630b8 Creating 
+ Container dos-pipeline-skeleton-attacker-run-2331ba9630b8 Created 
+[slowloris] target=172.20.0.10:80 connections=200 duration=10s
+[slowloris] 200 connections survived, 0 died
+[slowloris] held 200 connections for 10.1s
+docker compose stop victim
+ Container dos-victim Stopping 
+ Container dos-victim Stopped 
+→ Detecting...
+docker compose run --no-deps --rm detector
+ Container dos-pipeline-skeleton-detector-run-e08ad8468e4a Creating 
+ Container dos-pipeline-skeleton-detector-run-e08ad8468e4a Created 
+[detector] pcap=/pcaps/victim-20260423-065322.pcap
+[detector] prediction=slowloris confidence=1.0
+[detector] wrote /reports/report-20260423-065337.json
+[detector] wrote /reports/report-20260423-065337.html
+
+── 4/4 Benign Traffic ──
+docker compose up -d victim
+ Container dos-victim Starting 
+ Container dos-victim Started 
+ATTACK_TYPE=benign DURATION_SEC=5 docker compose run --rm attacker
+ Container dos-victim Running 
+ Container dos-pipeline-skeleton-attacker-run-af26f80bcf9e Creating 
+ Container dos-pipeline-skeleton-attacker-run-af26f80bcf9e Created 
+[benign] target=172.20.0.10:80 duration=5s
+[benign] sent 10 requests in 5.1s (0 failed)
+docker compose stop victim
+ Container dos-victim Stopping 
+ Container dos-victim Stopped 
+→ Detecting...
+docker compose run --no-deps --rm detector
+ Container dos-pipeline-skeleton-detector-run-aa2acbef1bd1 Creating 
+ Container dos-pipeline-skeleton-detector-run-aa2acbef1bd1 Created 
+[detector] pcap=/pcaps/victim-20260423-065338.pcap
+[detector] prediction=benign confidence=1.0
+[detector] wrote /reports/report-20260423-065347.json
+[detector] wrote /reports/report-20260423-065347.html
+
+── Regression Suite ──
+./tests/run_tests.sh
+→ Building detector image for regression tests...
+ Image dos-detection-pipeline-victim Building 
+ Image dos-detection-pipeline-detector Building 
+ Image dos-detection-pipeline-detector Built 
+→ Running labeled PCAP regression suite...
+Regression Results:
+[PASS] benign_01.pcap: pred=benign/False expected=benign/False
+[PASS] benign_02.pcap: pred=benign/False expected=benign/False
+[PASS] slowloris_01.pcap: pred=slowloris/True expected=slowloris/True
+[PASS] slowloris_02.pcap: pred=slowloris/True expected=slowloris/True
+[PASS] syn_flood_01.pcap: pred=syn_flood/True expected=syn_flood/True
+[PASS] syn_flood_02.pcap: pred=syn_flood/True expected=syn_flood/True
+[PASS] syn_flood_03.pcap: pred=syn_flood/True expected=syn_flood/True
+[PASS] udp_flood_01.pcap: pred=udp_flood/True expected=udp_flood/True
+[PASS] udp_flood_02.pcap: pred=udp_flood/True expected=udp_flood/True
+[PASS] udp_flood_03.pcap: pred=udp_flood/True expected=udp_flood/True
+
+Summary: 10/10 passed
+
+=== Demo Complete ===
