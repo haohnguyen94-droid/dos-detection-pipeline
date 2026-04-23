@@ -1,0 +1,4 @@
+attack_type: syn_flood
+expected_alert: true
+duration_sec: 1
+notes: "Edge case: very short 1-second SYN flood burst"
