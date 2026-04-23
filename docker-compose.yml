@@ -17,6 +17,7 @@ services:
 
   victim:
     build: ./victim
+    image: dos-detection-pipeline-victim
     container_name: dos-victim
     networks:
       dos-lab:
@@ -27,6 +28,7 @@ services:
 
   attacker:
     build: ./attacker
+    image: dos-detection-pipeline-attacker
     container_name: dos-attacker
     networks:
       dos-lab:
@@ -42,6 +44,7 @@ services:
 
   detector:
     build: ./detector
+    image: dos-detection-pipeline-detector
     container_name: dos-detector
     networks:
       - dos-lab

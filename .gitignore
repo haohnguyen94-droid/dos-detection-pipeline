@@ -1,6 +1,7 @@
 reports/*.html
 reports/*.json
-tests/pcaps/*.pcap
+# Ignore runtime pcaps but NOT the labeled test corpus
+# tests/pcaps/*.pcap    ← removed; corpus pcaps must be committed
 __pycache__/
 *.py[cod]
 .DS_Store
