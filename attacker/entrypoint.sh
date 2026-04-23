@@ -12,6 +12,9 @@ case "${ATTACK_TYPE:-syn_flood}" in
   slowloris)
     exec python /attacker/slowloris.py
     ;;
+  benign)
+    exec python /attacker/benign.py
+    ;;
   *)
     echo "[attacker]Unknown ATTACK_TYPE: $ATTACK_TYPE" >&2
     exit 1  

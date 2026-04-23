@@ -16,8 +16,12 @@ def _latest_pcap(pcap_dir: str) -> str | None:
     candidates = glob.glob(os.path.join(pcap_dir, "*.pcap"))
     if not candidates:
         return None
-    # Prefer richer captures over tiny startup pcaps: sort by (size, mtime).
-    return max(candidates, key=lambda p: (os.path.getsize(p), os.path.getmtime(p)))
+    # Skip tiny startup pcaps (< 10KB), then pick the most recent.
+    real_captures = [p for p in candidates if os.path.getsize(p) >= 10_000]
+    if not real_captures:
+        # Fall back to any pcap if all are small.
+        real_captures = candidates
+    return max(real_captures, key=lambda p: os.path.getmtime(p))
 
 
 def parse_args() -> argparse.Namespace:
