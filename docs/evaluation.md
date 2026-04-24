@@ -1,5 +1,15 @@
 # Evaluation — Draft Results
 
+## What Works
+- Three DoS attack simulators: SYN flood, UDP flood, HTTP Slowloris
+- Benign traffic generator for false-positive testing
+- Containerized victim with nginx + passive tcpdump capture
+- Rule-based detector with per-flow feature extraction
+- HTML/JSON report generation with timestamped + latest outputs
+- One-command pipeline: `make up && make demo`
+- 13/13 regression suite with edge-case and negative tests
+- Zero false positives on benign traffic
+
 ## Test Corpus
 10 labeled pcap files: 3 SYN flood, 3 UDP flood, 2 Slowloris, 2 benign.
 All generated using the project's attack scripts against the containerized
@@ -32,6 +42,8 @@ victim, with YAML ground-truth labels.
 
 ## What's Next (Final Phase)
 - Expand corpus to 20+ pcaps with varied parameters
-- Test edge cases (short floods, mixed traffic, low-rate attacks)
-- Final analysis with charts showing feature distributions
+- Add CI/CD pipeline with GitHub Actions
+- Test with varied attack rates and durations
+- Generate feature distribution charts across attack types
+- Final documentation polish and README cleanup
 
